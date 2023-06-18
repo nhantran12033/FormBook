@@ -10,6 +10,6 @@ namespace FormBook.Books
     {
         Task<List<BookDto>> GetListAsync();
         Task<BookDto> CreateListAsync(BookDto bookDto);
-
+        Task DeleteAsync(Guid Id);
     }
 }

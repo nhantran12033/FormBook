@@ -33,9 +33,31 @@ namespace FormBook
         }
         public async Task<BookDto> CreateListAsync(BookDto bookDto)
         {
-            var book = ObjectMapper.Map<BookDto, Book>(bookDto);
+            var items = await _bookRepository.GetListAsync();
+            var authors = await _authorRepository.GetListAsync();
+
+            Book book = new Book
+            {
+                Name = bookDto.Name,
+                AuthorId = (Guid)(authors.FirstOrDefault(author => author.AuthorName == bookDto.AuthorName)?.Id),
+                Price = bookDto.Price,
+                PublishDate = bookDto.PublishDate
+            };
             await _bookRepository.InsertAsync(book);
-            return ObjectMapper.Map<Book, BookDto>(book);
+
+            var createBook = new BookDto
+            {
+                Name = book.Name,
+                PublishDate = book.PublishDate,
+                Price = book.Price,
+                AuthorName = authors.FirstOrDefault(author => author.Id == book.AuthorId)?.AuthorName
+            };
+            return createBook;
+        }
+        public async Task DeleteAsync(Guid Id)
+        {
+            await _bookRepository.FirstOrDefaultAsync(x => x.Id == id))
+            await _bookRepository.DeleteAsync(Id);
         }
     }
 }
